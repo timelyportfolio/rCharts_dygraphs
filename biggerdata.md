@@ -67,7 +67,7 @@ Also, you should see the nice closest series highlighting functionality of `dygr
 </div>
 <div class = 'row'>
   <div class = 'span8 offset2'>
-    <small class="text-info">drag/highlight to zoom; double-click to unzoom</small>
+    <small class="text-info">click/drag to zoom; shift+click/drag to pan; double-click to unzoom</small>
   </div>
 </div>
 <br>
