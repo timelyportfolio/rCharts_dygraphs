@@ -1,0 +1,12 @@
+<script>
+  (function(){
+    var params = {{{ chartParams }}};
+    var data = _.unzip([params.data[params.x],params.data[params.y]]);
+    params.chart.labels = [params.x,params.y];
+    new Dygraph(
+      document.getElementById( '{{chartId}}' ),
+      data,
+      params.chart
+    );
+  })();
+</script>

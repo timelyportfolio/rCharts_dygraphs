@@ -1,0 +1,2 @@
+dygraphs:
+  jshead: [dygraph-combined.js, lodash.js]
