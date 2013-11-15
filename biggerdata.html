@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Dygraphs with Bigger Data | rCharts + dygraphs</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <link rel="icon" type="image/png" href="favicon.ico">
+  <style>
+  body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
+  </style>
+  
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.no-responsive.no-icons.min.css" rel="stylesheet">
+<!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
+<link  rel="stylesheet" 
+    href="http://netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css">
+  <link rel="stylesheet" href="libraries/frameworks/bootstrap/css/bootstrap-responsive.min.css">
+  
+  <link rel="stylesheet" href="libraries/frameworks/bootstrap/css/main.css">
+  <link rel="stylesheet" href="libraries/highlighters/prettify/css/twitter-bootstrap.css" />
+  <script src="libraries/frameworks/bootstrap/js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/frameworks/bootstrap/js/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+    <link rel=stylesheet href="http://fonts.googleapis.com/css?family=Raleway:300"></link>
+<link rel=stylesheet href="http://fonts.googleapis.com/css?family=Oxygen"></link>
+
+  <script src="./lodash.js"></script>
+<script src="./dygraph-combined.js"></script>
+
+</head>
+<body>
+   <!--[if lt IE 7]>
+     <p class="chromeframe">You are using an outdated browser. 
+       <a href="http://browsehappy.com/">Upgrade your browser today</a> or 
+       <a href="http://www.google.com/chromeframe/?redirect=true"> 
+         install Google Chrome Frame
+       </a> to better experience this site.
+    </p>
+   <![endif]-->
+   <!-- Ref: http://twitter.github.com/bootstrap/examples/hero.html -->
+   
+    <div class="container">
+      
+<!-- thanks http://stackoverflow.com/questions/17836686/highlight-closest-series-but-only-show-x-y-of-highlighted-series -->
+
+<style>
+  #status > span { display: none; }
+  #status > span.highlight { display: inline; }
+  
+.container{width:950px;}
+
+body{
+  font-family: 'Oxygen', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+h1,h2,h3,h4 {
+font-family: 'Raleway', sans-serif;
+}
+
+h3 {
+background-color: #D4DAEC;
+  text-indent: 100px; 
+}
+
+h4 {
+text-indent: 100px;
+}
+</style>
+
+<h1>Dygraphs With Bigger but Not Quite Big Data</h1>
+
+<p>How big is big?  I&#39;m not sure.  Sometimes with &quot;big&quot; data d3/svg gets sluggish.  An older robust canvas-based HTML5 library <a href="http://dygraphs.com"><code>dygraphs</code></a> claims,</p>
+
+<blockquote>
+Handles huge data sets: dygraphs plots millions of points without getting bogged down.
+</blockquote>
+
+<p>Let&#39;s test it with some &quot;almost big&quot; data in the form of US Industry daily return data since 1926 from the <a href="http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html">Kenneth French data library</a>.  This is 23,027 rows and 48 columns for 1,105,296 tuples.</p>
+
+<p>Also, you should see the nice closest series highlighting functionality of <code>dygraphs</code>.</p>
+
+
+<div class = 'row'>
+  <div id = "dygraphIndustry" class = 'span8' style = 'height:300px;'>
+  </div>
+  <div id="status" class = 'span4'>
+  </div>  
+</div>
+
+<div class = 'row'>
+  <div class = 'span8 offset2'>
+    <small class="text-info">drag/highlight to zoom; double-click to unzoom</small>
+  </div>
+</div>
+
+<p><br></p>
+
+<h3>Get the Data</h3>
+
+<pre><code class="r">library(rCharts)
+# get very helpful Ken French data for this project we will look at Industry
+# Portfolios
+# http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/48_Industry_Portfolios_daily.zip
+
+require(quantmod)
+</code></pre>
+
+<pre><code class="r"># my.url will be the location of the zip file with the data
+my.url = &quot;http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/48_Industry_Portfolios_daily.zip&quot;
+# this will be the temp file set up for the zip file
+my.tempfile &lt;- paste(tempdir(), &quot;\\frenchindustry.zip&quot;, sep = &quot;&quot;)
+# my.usefile is the name of the txt file with the data
+my.usefile &lt;- paste(tempdir(), &quot;\\48_Industry_Portfolios_daily.txt&quot;, sep = &quot;&quot;)
+download.file(my.url, my.tempfile, method = &quot;auto&quot;, quiet = FALSE, mode = &quot;wb&quot;, 
+    cacheOK = TRUE)
+unzip(my.tempfile, exdir = tempdir(), junkpath = TRUE)
+# read space delimited text file extracted from zip
+french_industry &lt;- read.table(file = my.usefile, header = TRUE, sep = &quot;&quot;, as.is = TRUE, 
+    skip = 9, nrows = 23027)
+
+# get dates ready for xts index
+datestoformat &lt;- rownames(french_industry)
+datestoformat &lt;- paste(substr(datestoformat, 1, 4), substr(datestoformat, 5, 
+    6), substr(datestoformat, 7, 8), sep = &quot;-&quot;)
+
+# get xts for analysis
+french_industry_xts &lt;- as.xts(french_industry[, 1:NCOL(french_industry)], order.by = as.Date(datestoformat))
+
+# divide by 100 to get percent
+french_industry_xts &lt;- french_industry_xts/100
+
+# delete missing data which is denoted by -0.9999
+french_industry_xts[which(french_industry_xts &lt; -0.99, arr.ind = TRUE)[, 1], 
+    unique(which(french_industry_xts &lt; -0.99, arr.ind = TRUE)[, 2])] &lt;- 0
+
+# get price series or cumulative growth of 1
+french_industry_price &lt;- log(cumprod(french_industry_xts + 1))
+</code></pre>
+
+<h3>Write the Data To Demonstrate Data from url</h3>
+
+<pre><code class="r"># write to a csv that we will read with dygraphs url
+write.csv(data.frame(french_industry_price), &quot;french_industry.csv&quot;, quote = F)
+</code></pre>
+
+<h3>rCharts Magic</h3>
+
+<pre><code class="r">dy1 &lt;- rCharts$new()
+dy1$setLib(&quot;.&quot;)
+dy1$templates$script = &quot;chart_csv.html&quot;
+dy1$set(data = &quot;./french_industry.csv&quot;, chart = list(title = &quot;US Industries Since 1926 | source: Kenneth French&quot;, 
+    ylabel = &quot;Cumulative Return (log)&quot;, labelsDiv = &quot;#!document.getElementById(&#39;status&#39;)!#&quot;, 
+    labelsDivStyles = list(background = &quot;none&quot;), strokeWidth = 0.75, showLabelsOnHighlight = TRUE, 
+    highlightCircleSize = 2, highlightSeriesOpts = list(strokeWidth = 1, highlightCircleSize = 5), 
+    width = 550))
+cat(noquote(dy1$html(chartId = &quot;dygraphIndustry&quot;)))
+</code></pre>
+
+<script>
+  (function(){
+    var params = {
+ "dom": "dygraphIndustry",
+"width":    800,
+"height":    400,
+"data": "./french_industry.csv",
+"chart": {
+ "title": "US Industries Since 1926 | source: Kenneth French",
+"ylabel": "Cumulative Return (log)",
+"labelsDiv": document.getElementById('status'),
+"labelsDivStyles": {
+ "background": "none" 
+},
+"strokeWidth":   0.75,
+"showLabelsOnHighlight": true,
+"highlightCircleSize":      2,
+"highlightSeriesOpts": {
+ "strokeWidth":      1,
+"highlightCircleSize":      5 
+},
+"width":    550 
+},
+"id": "dygraphIndustry" 
+};
+    //var data = _.unzip([params.data[params.x],params.data[params.y]]);
+    //params.chart.labels = [params.x,params.y];
+    new Dygraph(
+      document.getElementById( 'dygraphIndustry' ),
+      params.data,
+      params.chart
+    );
+  })();
+</script>
+
+<h3>Thanks</h3>
+<ul>
+<li><a href="http://twitter.com/ramnath_vaidya">Ramnath Vaidyanathan</a></li>
+<li>Dan, Alistair, Robert, and Klaus - dygraphs contributors</li>
+<li><a href="http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html">Kenneth French</a> for the data</li>
+</ul>
+
+    </div>
+        
+</body>
+  <script src="libraries/frameworks/bootstrap/js/vendor/bootstrap.min.js"></script>
+  <script src="libraries/frameworks/bootstrap/js/plugins.js"></script>
+  <script src="libraries/frameworks/bootstrap/js/main.js"></script>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- Google Prettify -->
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+  <script src='libraries/highlighters/prettify/js/lang-r.js'></script>
+  <script>
+    var pres = document.getElementsByTagName("pre");
+    for (var i=0; i < pres.length; ++i) {
+      pres[i].className = "prettyprint linenums";
+    }
+    prettyPrint();
+  </script>
+  <!-- End Google Prettify --> 
+  </html>

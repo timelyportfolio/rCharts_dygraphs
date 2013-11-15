@@ -76,6 +76,11 @@ opts_chunk$set(
   <div id="status" class = 'span4'>
   </div>  
 </div>
+<div class = 'row'>
+  <div class = 'span8 offset2'>
+    <small class="text-info">drag/highlight to zoom; double-click to unzoom</small>
+  </div>
+</div>
 <br>
 
 ### Get the Data
