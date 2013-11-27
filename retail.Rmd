@@ -47,7 +47,7 @@ text-indent: 100px;
 
 Recent price performance by the Retail Industry group seems mighty strong.  We already set up the framework for using [`dygraphs`](http://dygraphs.com) to explore the Kenneth French [industry dataset](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html) in [this post](http://timelyportfolio.blogspot.com/2013/11/dygraphs-with-bigger-data-us-industries.html).  In honor of Black Friday, let's use it now to focus on US Retail with some help from the R package `PerformanceAnalytics`.
 
-Notice how the two `dygraphs` are synchronized by using the technique shown in this [gallery example](http://dygraphs.com/gallery/#g/synchronize).
+Notice how the two `dygraphs`' zoom and pan are synchronized by using the technique shown in this [gallery example](http://dygraphs.com/gallery/#g/synchronize).
 
 ---
 ```{r echo=F, warning=F, error=F, message=F, cache = F}
