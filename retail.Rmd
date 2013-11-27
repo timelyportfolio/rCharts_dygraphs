@@ -47,10 +47,6 @@ text-indent: 100px;
 
 Recent price performance by the Retail Industry group seems mighty strong.  We already set up the framework for using [`dygraphs`](http://dygraphs.com) to explore the Kenneth French [industry dataset](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html) in [this post](http://timelyportfolio.blogspot.com/2013/11/dygraphs-with-bigger-data-us-industries.html).  In honor of Black Friday, let's use it now to focus on US Retail with some help from the R package `PerformanceAnalytics`.
 
-Nothing odd really stands out after this inspection.  However, if you look at the Dow Jones US Retail Index, a much different picture appears.
-
-Happy Black Friday!
-
 ---
 ```{r echo=F, warning=F, error=F, message=F, cache = F}
 require(knitr)
@@ -62,7 +58,8 @@ opts_chunk$set(
   cache = F,
   results = 'asis',
   fig.width = 11,
-  fig.height = 4
+  fig.height = 4,
+  tidy = F
 )
 ```
 
@@ -79,11 +76,22 @@ opts_chunk$set(
   </div>  
 </div>
 <div class = 'row'>
-  <div class = 'span8 offset2'>
+  <div class = 'span8'>
     <small class="text-info">click/drag to zoom; shift+click/drag to pan; double-click to unzoom</small>
   </div>
 </div>
+
 <br>
+
+Nothing odd really stands out after this inspection.  However, if you look at the Dow Jones US Retail Index, a much different picture appears.
+
+<div class = 'row'>
+  <div class = 'span8'>
+    <a href = "http://stockcharts.com/h-sc/ui?s=$DJUSRT&p=M&yr=13&mn=3&dy=0&id=p76535120217"><img src = "./djusrt.png"></img></a>
+  </div>
+</div>
+
+Happy Black Friday!
 
 ### Get the Data Just Like Before
 ```{r}
@@ -159,8 +167,7 @@ cat(
   toObj(rjson::toJSON( sharpe.df )),
   '
   </script>'
-)
-  
+)  
 ```
 
 ### rCharts Magic with a Spice of Lodash
@@ -211,7 +218,7 @@ dy2$set(
       strokeWidth = 1,
       highlightCircleSize = 5
     ),
-    colors = "lightgray",
+    colors = "#!['gray']!#",
     width = 550
   )
 )

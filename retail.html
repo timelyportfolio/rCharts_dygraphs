@@ -80,10 +80,6 @@ text-indent: 100px;
 
 <p>Recent price performance by the Retail Industry group seems mighty strong.  We already set up the framework for using <a href="http://dygraphs.com"><code>dygraphs</code></a> to explore the Kenneth French <a href="http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html">industry dataset</a> in <a href="http://timelyportfolio.blogspot.com/2013/11/dygraphs-with-bigger-data-us-industries.html">this post</a>.  In honor of Black Friday, let&#39;s use it now to focus on US Retail with some help from the R package <code>PerformanceAnalytics</code>.</p>
 
-<p>Nothing odd really stands out after this inspection.  However, if you look at the Dow Jones US Retail Index, a much different picture appears.</p>
-
-<p>Happy Black Friday!</p>
-
 
 <div class = 'row'>
   <div id = "dygraphPrice" class = 'span8' style = 'height:300px;'>
@@ -100,68 +96,98 @@ text-indent: 100px;
 </div>
 
 <div class = 'row'>
-  <div class = 'span8 offset2'>
+  <div class = 'span8'>
     <small class="text-info">click/drag to zoom; shift+click/drag to pan; double-click to unzoom</small>
   </div>
 </div>
 
 <p><br></p>
 
+<p>Nothing odd really stands out after this inspection.  However, if you look at the Dow Jones US Retail Index, a much different picture appears.</p>
+
+<div class = 'row'>
+  <div class = 'span8'>
+    <a href = "http://stockcharts.com/h-sc/ui?s=$DJUSRT&p=M&yr=13&mn=3&dy=0&id=p76535120217"><img src = "./djusrt.png"></img></a>
+  </div>
+</div>
+
+<p>Happy Black Friday!</p>
+
 <h3>Get the Data Just Like Before</h3>
 
 <pre><code class="r">library(rCharts)
-# get very helpful Ken French data for this project we will look at Industry
-# Portfolios
-# http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/48_Industry_Portfolios_daily.zip
+#get very helpful Ken French data
+#for this project we will look at Industry Portfolios
+#http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/48_Industry_Portfolios_daily.zip
 
 require(quantmod)
 require(PerformanceAnalytics)
 </code></pre>
 
-<pre><code class="r"># my.url will be the location of the zip file with the data
-my.url = &quot;http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/48_Industry_Portfolios_daily.zip&quot;
-# this will be the temp file set up for the zip file
-my.tempfile &lt;- paste(tempdir(), &quot;\\frenchindustry.zip&quot;, sep = &quot;&quot;)
-# my.usefile is the name of the txt file with the data
-my.usefile &lt;- paste(tempdir(), &quot;\\48_Industry_Portfolios_daily.txt&quot;, sep = &quot;&quot;)
-download.file(my.url, my.tempfile, method = &quot;auto&quot;, quiet = FALSE, mode = &quot;wb&quot;, 
-    cacheOK = TRUE)
-unzip(my.tempfile, exdir = tempdir(), junkpath = TRUE)
-# read space delimited text file extracted from zip
-french_industry &lt;- read.table(file = my.usefile, header = TRUE, sep = &quot;&quot;, as.is = TRUE, 
-    skip = 9, nrows = 23027)
+<pre><code class="r">#my.url will be the location of the zip file with the data
+my.url=&quot;http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/48_Industry_Portfolios_daily.zip&quot;
+#this will be the temp file set up for the zip file
+my.tempfile&lt;-paste(tempdir(),&quot;\\frenchindustry.zip&quot;,sep=&quot;&quot;)
+#my.usefile is the name of the txt file with the data
+my.usefile&lt;-paste(tempdir(),&quot;\\48_Industry_Portfolios_daily.txt&quot;,sep=&quot;&quot;)
+download.file(my.url, my.tempfile, method=&quot;auto&quot;, 
+              quiet = FALSE, mode = &quot;wb&quot;,cacheOK = TRUE)
+unzip(my.tempfile,exdir=tempdir(),junkpath=TRUE)
+#read space delimited text file extracted from zip
+french_industry &lt;- read.table(file=my.usefile,
+                              header = TRUE, sep = &quot;&quot;,
+                              as.is = TRUE,
+                              skip = 9, nrows=23027)
 
-# get dates ready for xts index
+#get dates ready for xts index
 datestoformat &lt;- rownames(french_industry)
-datestoformat &lt;- paste(substr(datestoformat, 1, 4), substr(datestoformat, 5, 
-    6), substr(datestoformat, 7, 8), sep = &quot;-&quot;)
+datestoformat &lt;- paste(substr(datestoformat,1,4),
+                       substr(datestoformat,5,6),substr(datestoformat,7,8),sep=&quot;-&quot;)
 
-# get xts for analysis
-french_industry_xts &lt;- as.xts(french_industry[, 1:NCOL(french_industry)], order.by = as.Date(datestoformat))
+#get xts for analysis
+french_industry_xts &lt;- as.xts(french_industry[,1:NCOL(french_industry)],
+                              order.by=as.Date(datestoformat))
 
-# divide by 100 to get percent
+#divide by 100 to get percent
 french_industry_xts &lt;- french_industry_xts/100
 
-# delete missing data which is denoted by -0.9999
-french_industry_xts[which(french_industry_xts &lt; -0.99, arr.ind = TRUE)[, 1], 
-    unique(which(french_industry_xts &lt; -0.99, arr.ind = TRUE)[, 2])] &lt;- 0
+#delete missing data which is denoted by -0.9999
+french_industry_xts[which(french_industry_xts &lt; -0.99,arr.ind=TRUE)[,1],
+                  unique(which(french_industry_xts &lt; -0.99,arr.ind=TRUE)[,2])] &lt;- 0
 
-# get price series or cumulative growth of 1
-french_industry_price &lt;- log(cumprod(french_industry_xts + 1))
+#get price series or cumulative growth of 1
+french_industry_price &lt;- log(cumprod(french_industry_xts+1))
 </code></pre>
 
 <h3>Transform and Supply Data as an Array</h3>
 
 <p>Dygraphs allows multiple <a href="http://dygraphs.com/data.html">data format options</a>.  We used a CSV url last time.  Let&#39;s try the <code>Array</code> method.</p>
 
-<pre><code class="r">retail.df &lt;- data.frame(paste0(&quot;#!new Date(&#39;&quot;, index(french_industry_price), 
-    &quot;&#39;)!#&quot;), french_industry_price$Rtail)
-colnames(retail.df) &lt;- c(&quot;date&quot;, &quot;price&quot;)
-sharpe.df &lt;- data.frame(paste0(&quot;#!new Date(&#39;&quot;, index(french_industry_price), 
-    &quot;&#39;)!#&quot;), apply.rolling(french_industry_xts$Rtail, Sharpe, width = 36, by = 1))
-colnames(sharpe.df) &lt;- c(&quot;date&quot;, &quot;sharpe&quot;)
-cat(&quot;&lt;script&gt;\n  var price = &quot;, toObj(rjson::toJSON(retail.df)), &quot;\n  var sharpe = &quot;, 
-    toObj(rjson::toJSON(sharpe.df)), &quot;\n  &lt;/script&gt;&quot;)
+<pre><code class="r">retail.df &lt;- data.frame(
+  paste0(&quot;#!new Date(\&#39;&quot;,index(french_industry_price),&quot;\&#39;)!#&quot;),
+  french_industry_price$Rtail
+)
+colnames(retail.df) &lt;- c(&quot;date&quot;,&quot;price&quot;)
+sharpe.df &lt;- data.frame(
+  paste0(&quot;#!new Date(\&#39;&quot;,index(french_industry_price),&quot;\&#39;)!#&quot;),
+  apply.rolling(
+    french_industry_xts$Rtail,
+    Sharpe,
+    width = 36,
+    by = 1
+  )
+)
+colnames(sharpe.df) &lt;- c(&quot;date&quot;,&quot;sharpe&quot;)
+cat(
+  &#39;&lt;script&gt;
+  var price = &#39;,
+  toObj(rjson::toJSON( retail.df )),
+  &#39;
+  var sharpe = &#39;,
+  toObj(rjson::toJSON( sharpe.df )),
+  &#39;
+  &lt;/script&gt;&#39;
+)  
 </code></pre>
 
 <script>
@@ -257,7 +283,7 @@ dy2$set(
       strokeWidth = 1,
       highlightCircleSize = 5
     ),
-    colors = &quot;lightgray&quot;,
+    colors = &quot;#![&#39;gray&#39;]!#&quot;,
     width = 550
   )
 )
@@ -285,7 +311,7 @@ cat(noquote(dy2$html( chartId = &quot;dygraphSharpe&quot; )))
  "strokeWidth":      1,
 "highlightCircleSize":      5 
 },
-"colors": "lightgray",
+"colors": ['gray'],
 "width":    550 
 },
 "id": "dygraphSharpe" 
