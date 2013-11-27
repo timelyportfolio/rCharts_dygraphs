@@ -83,7 +83,7 @@ opts_chunk$set(
 
 <br>
 
-Nothing odd really stands out after this inspection.  However, if you look at the Dow Jones US Retail Index, a much different picture appears.
+Nothing odd really stands out after this inspection.  However, if you look at the Dow Jones US Retail Index, a much different picture appears.  I'll save that analysis until after Thanksgiving.
 
 <div class = 'row'>
   <div class = 'span8'>
@@ -91,6 +91,7 @@ Nothing odd really stands out after this inspection.  However, if you look at th
   </div>
 </div>
 
+<br>
 Happy Black Friday!
 
 ### Get the Data Just Like Before
@@ -166,7 +167,7 @@ cat(
   var sharpe = ',
   toObj(rjson::toJSON( sharpe.df )),
   '
-  </script>'
+</script>'
 )  
 ```
 
