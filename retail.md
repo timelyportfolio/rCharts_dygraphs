@@ -286,7 +286,7 @@ dy2$set(
     labelsDivStyles= list(
       background = 'none'
     ),
-    labels = "#! _.keys(price) !#",
+    labels = "#! _.keys(sharpe) !#",
     strokeWidth = 0.75,
     showLabelsOnHighlight = TRUE,
     highlightCircleSize = 2,    
@@ -329,7 +329,7 @@ cat(noquote(dy2$html( chartId = "dygraphSharpe" )))
 "labelsDivStyles": {
  "background": "none" 
 },
-"labels":  _.keys(price) ,
+"labels":  _.keys(sharpe) ,
 "strokeWidth":   0.75,
 "showLabelsOnHighlight": true,
 "highlightCircleSize":      2,
