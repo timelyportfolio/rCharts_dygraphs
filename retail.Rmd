@@ -47,6 +47,8 @@ text-indent: 100px;
 
 Recent price performance by the Retail Industry group seems mighty strong.  We already set up the framework for using [`dygraphs`](http://dygraphs.com) to explore the Kenneth French [industry dataset](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html) in [this post](http://timelyportfolio.blogspot.com/2013/11/dygraphs-with-bigger-data-us-industries.html).  In honor of Black Friday, let's use it now to focus on US Retail with some help from the R package `PerformanceAnalytics`.
 
+Notice how the two `dygraphs` are synchronized by using the technique shown in this [gallery example](http://dygraphs.com/gallery/#g/synchronize).
+
 ---
 ```{r echo=F, warning=F, error=F, message=F, cache = F}
 require(knitr)
@@ -76,7 +78,7 @@ opts_chunk$set(
   </div>  
 </div>
 <div class = 'row'>
-  <div class = 'span8'>
+  <div class = 'span8 offset2'>
     <small class="text-info">click/drag to zoom; shift+click/drag to pan; double-click to unzoom</small>
   </div>
 </div>
@@ -167,6 +169,8 @@ cat(
   var sharpe = ',
   toObj(rjson::toJSON( sharpe.df )),
   '
+  var blockRedraw = false;
+  var gs = [];
 </script>'
 )  
 ```
@@ -175,7 +179,7 @@ cat(
 ```{r}
 dy1 <- rCharts$new()
 dy1$setLib( "." )
-dy1$templates$script = "chart_csv.html"
+dy1$templates$script = "chart_csv2.html"
 dy1$set(
   data = "#!eval('_.unzip(price)')!#",
   chart = list(
@@ -193,7 +197,22 @@ dy1$set(
       strokeWidth = 1,
       highlightCircleSize = 5
     ),
-    width = 550
+    width = 550,
+    drawCallback = "#!
+      function(me, initial) {
+        if (blockRedraw || initial) return;
+        blockRedraw = true;
+        var range = me.xAxisRange();
+        var yrange = me.yAxisRange();
+        for (var j = 0; j < gs.length; j++) {
+          if (gs[j] == me) continue;
+          gs[j].updateOptions( {
+            dateWindow: range,
+            //valueRange: yrange
+          } );
+        }
+        blockRedraw = false;
+      }!#"
   )
 )
 cat(noquote(dy1$html( chartId = "dygraphPrice" )))
@@ -201,7 +220,7 @@ cat(noquote(dy1$html( chartId = "dygraphPrice" )))
 
 dy2 <- rCharts$new()
 dy2$setLib( "." )
-dy2$templates$script = "chart_csv.html"
+dy2$templates$script = "chart_csv2.html"
 dy2$set(
   data = "#!eval('_.unzip(sharpe)')!#",
   chart = list(
@@ -211,7 +230,7 @@ dy2$set(
     labelsDivStyles= list(
       background = 'none'
     ),
-    labels = "#! _.keys(price) !#",
+    labels = "#! _.keys(sharpe) !#",
     strokeWidth = 0.75,
     showLabelsOnHighlight = TRUE,
     highlightCircleSize = 2,    
@@ -220,7 +239,22 @@ dy2$set(
       highlightCircleSize = 5
     ),
     colors = "#!['gray']!#",
-    width = 550
+    width = 550,
+    drawCallback = "#!
+      function(me, initial) {
+        if (blockRedraw || initial) return;
+        blockRedraw = true;
+        var range = me.xAxisRange();
+        var yrange = me.yAxisRange();
+        for (var j = 0; j < gs.length; j++) {
+          if (gs[j] == me) continue;
+          gs[j].updateOptions( {
+            dateWindow: range,
+            //valueRange: yrange
+          } );
+        }
+        blockRedraw = false;
+      }!#"
   )
 )
 cat(noquote(dy2$html( chartId = "dygraphSharpe" )))
