@@ -180,7 +180,7 @@ cat(
 
 ```r
 dy1 <- rCharts$new()
-dy1$setLib( "." )
+dy1$setLib( "http://timelyportfolio.github.io/rCharts_dygraph" )
 dy1$templates$script = "chart_csv2.html"
 dy1$set(
   data = "#!eval('_.unzip(price)')!#",
