@@ -13,10 +13,14 @@ fama.df <- compare_scholar_careers(famaId)
 #plot(fama.df$cites~fama.df$year, type = "p")
 #abline(lm(fama.df$cites~fama.df$year), col="green")
 
+
+#you will need this branch of rCharts
+#require(devtools)
+#install_github("rCharts","timelyportfolio",ref="dimple_layer")
 library(rCharts)
 
 fama.df$date <- paste0(
-  "#! new Date(",
+  "#!new Date(",
   as.numeric(as.POSIXct(paste0(fama.df$year,"-12-31"))) * 1000,
   ")!#"
 )
@@ -38,4 +42,6 @@ dy1$set(
     strokeWidth = 1.5
   )
 )
+
+dy1$setTemplate(afterScript = "<script></script>")
 dy1
