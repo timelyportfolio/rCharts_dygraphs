@@ -1,0 +1,11 @@
+<script>
+var blockRedraw = false;
+  (function(){
+    var params = {{{ chartParams }}};
+    new Dygraph(
+      document.getElementById( '{{chartId}}' ),
+      _.unzip(params.data),
+      params.chart
+    );
+  })();
+</script>
