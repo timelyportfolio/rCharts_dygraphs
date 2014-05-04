@@ -57,6 +57,8 @@ Dygraph <- setRefClass('Dygraph', contains = 'rCharts'
         # background='none',
         backgroundColor='rgba(255, 255, 255, 0.5)'
       ))
+    if(!"rightGap" %in% names(args))
+      setOpts(rightGap=20) # makes it easier to highlight the right-most data point.
   },
   setOpts = function(...){
     opts <- list(...)
