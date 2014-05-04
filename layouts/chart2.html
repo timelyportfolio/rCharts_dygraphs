@@ -1,11 +1,12 @@
 <script>
-var blockRedraw = false;
+  if (typeof gs === 'undefined') { var gs = [] };
+  if (typeof blockRedraw === 'undefined') { var blockRedraw = false };
   (function(){
     var params = {{{ chartParams }}};
-    new Dygraph(
+    gs.push(new Dygraph(
       document.getElementById( '{{chartId}}' ),
       _.unzip(params.data),
-      params.chart
-    );
+      params.options
+    ));
   })();
 </script>

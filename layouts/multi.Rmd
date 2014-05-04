@@ -1,0 +1,33 @@
+---
+output:
+  html_document:
+    self_contained: no
+---
+```{r echo=F, warning=F, error=F, message=F, cache = F}
+require(knitr)
+opts_chunk$set(
+  echo=T,
+  warning=F,
+  error=F, 
+  message=F,
+  cache = F,
+  results = 'asis',
+  tidy = F
+)
+
+library(rCharts)
+
+```
+
+```{r echo=FALSE}
+cat(noquote(add_lib_assets("F:\\Google Drive\\RProjects\\rCharts_dygraphs", cdn=TRUE)))
+options(RCHART_WIDTH = 1500, RCHART_HEIGHT = 400)
+```
+
+<script>
+var blockRedraw = false;
+var gs = [];
+</script>
+
+<% lapply(showCharts, function(rCh) { rCh$print() } ) %>
+
