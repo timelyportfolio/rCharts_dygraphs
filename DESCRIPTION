@@ -1,0 +1,16 @@
+Package: rChartsDygraph
+Type: Package
+Title: dygraphs
+Version: 0.1
+Date: 2014-02-11
+Author: Daniel Krizian <daniel.krizian@gmail.com>
+Maintainer: Daniel Krizian <daniel.krizian@gmail.com>
+Description: test
+License: TBD
+Depends:
+    rCharts,
+    brew,
+    knitr
+Collate:
+    'Dygraph.R'
+Repository: GitHub <github.com/danielkrizian/rCharts_dygraphs> ; CRAN in the future
