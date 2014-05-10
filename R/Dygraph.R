@@ -12,6 +12,7 @@
 #' @param ... further options passed to the dygraph options slot. See http://dygraphs.com/options.html
 #' @params defaults logical. Should some dygraph options defaults be preloaded? Default is TRUE. 
 #' Options supplied via ... will still override these defaults.
+#' @export
 dgPlot <- dyPlot <- dygraph <- dygraphPlot<- function(data, x, y, y2, sync=FALSE, defaults=TRUE, ...){
   
   myChart <- Dygraph$new()
@@ -19,8 +20,10 @@ dgPlot <- dyPlot <- dygraph <- dygraphPlot<- function(data, x, y, y2, sync=FALSE
   if(defaults)
     myChart$setDefaults(...)
   myChart$setOpts(...) # dygraph javascript options
-  myChart$setLib( "." )
-  myChart$templates$script = "layouts/chart2.html"
+  # myChart$setLib( "." )
+  # myChart$templates$script = "layouts/chart2.html"
+  myChart$templates$script = system.file("/libraries/dygraph/layouts/chart2.html"
+                                         , package = "rChartsDygraph")
   myChart$setTemplate(afterScript = "<script></script>")
   if(sync)
     myChart$synchronize()
@@ -112,6 +115,37 @@ Dygraph <- setRefClass('Dygraph', contains = 'rCharts'
 layout_dygraphs <- function(...) {
   showCharts <- list(...)
   outfile <- file.path(tempdir(),"tmp.Rmd")
-  brew("layouts/multi.Rmd", outfile)
+  brew(system.file('libraries/dygraph/layouts/multi.Rmd', package = 'rChartsDygraph'), outfile)
   browseURL(knit2html(outfile, outfile))
+}
+
+#' Just a copy of rCharts::get_lib
+#' 
+#' Copied to rChartsDygraph package namespace, for Dygraph$new() to initialize lib field properly 
+get_lib <- function(lib){
+  if (grepl("^http", lib)){
+    return(list(name = basename(lib), url = lib))
+  }
+  if (file.exists(lib)){
+    lib_url <- normalizePath(lib)
+    lib <- basename(lib_url)
+  } else {
+    lib_url <- system.file('libraries', lib, package = 'rChartsDygraph')
+  }
+  return(list(name = basename(lib), url = lib_url))
+}
+
+#' Just a copy of rCharts::add_lib_assets
+#' 
+#' Copied to rChartsDygraph package namespace, so that it calls rChartsDygraph::get_lib,
+#' not rCharts::get_lib
+add_lib_assets <- function(lib, cdn = F){
+  assets = get_assets(get_lib(lib), cdn = cdn)
+  styles <- lapply(assets$css, function(style){
+    sprintf("<link rel='stylesheet' href=%s>", style)
+  })
+  scripts <- lapply(assets$jshead, function(script){
+    sprintf("<script type='text/javascript' src=%s></script>", script)
+  })
+  paste(c(styles, scripts), collapse = '\n')
 }
