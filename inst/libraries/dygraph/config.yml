@@ -3,5 +3,5 @@ dygraphs:
   jshead: []
   cdn:
     jshead:
-      - "https://rawgit.com/danielkrizian/dygraphs/master/dygraph-dev.js"
-      - "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"
+      - "http://rawgit.com/danielkrizian/dygraphs/master/dygraph-dev.js"
+      - "http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"
