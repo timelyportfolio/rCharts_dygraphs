@@ -21,9 +21,9 @@ dygraph2 <- dygraph(data=SPY[,c("Date","Momentum20days")], sync=TRUE, crosshair=
 layout_dygraphs(dygraph1, dygraph2)
 ```
 
-This should produce [two charts like here (link)](https://rawgit.com/danielkrizian/rCharts_dygraphs/master/examples/multi-layout.html)
+This should produce [two charts like here (link)](http://rawgit.com/danielkrizian/rCharts_dygraphs/master/examples/multi-layout.html)
 
 Zoom: mouse left-click & drag; Pan: Shift + mouse left-click & drag
 
-<iframe src="rawgit.com/danielkrizian/rCharts_dygraphs/master/examples/multi-layout.html" style="width: 1200px; height: 900px;"/iframe>
+<iframe src="http://rawgit.com/danielkrizian/rCharts_dygraphs/master/examples/multi-layout.html" style="width: 1200px; height: 900px;"/iframe>
 
