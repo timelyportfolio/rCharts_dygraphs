@@ -7,7 +7,7 @@ require(devtools)
 install_github('rCharts_dygraphs', 'danielkrizian')
 ```
 
-## Example
+## Example 
 
 ```coffee
 library(rChartsDygraph); library(quantmod)
