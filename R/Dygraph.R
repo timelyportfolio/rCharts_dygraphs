@@ -38,11 +38,16 @@ Dygraph <- setRefClass('Dygraph', contains = 'rCharts'
     params <<- c(params, list(options = list(width=params$width, height=params$height)))
   },
   parseData = function(data, x, y, y2){
+    if(is.xts(data)) {
+      t = index(data)
+      data = cbind(t, as.data.frame(data))
+    }
     if(missing(x)) #TODO: detect using xts:::timeBased
       x <- names(data)[1]
     if(missing(y))
       y = setdiff(names(data), x)
     data[[x]] <- paste0("#!new Date(", as.numeric(as.POSIXct(data[[x]])) * 1000, ")!#")
+    data[y] = lapply(data[y], function(x) as.numeric(x)) # temp fix for logical values
     data <- data[,c(x, y)]
     params <<- modifyList(params, getLayer(x=x, data=data, y=y))
     setOpts(labels=c(x, y)) # because lodash drops column names
