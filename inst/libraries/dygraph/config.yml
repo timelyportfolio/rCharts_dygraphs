@@ -1,7 +1,7 @@
 
 dygraphs:
-  jshead: []
+  jshead: [js/dygraph-combined.js, js/lodash.js]
   cdn:
     jshead:
-      - "http://rawgit.com/danielkrizian/dygraphs/master/dygraph-dev.js"
+      - "http://danielkrizian.github.io/dygraphs/dygraph-combined.js"
       - "http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"

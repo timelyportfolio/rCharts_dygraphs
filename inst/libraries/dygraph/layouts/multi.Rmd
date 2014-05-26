@@ -20,8 +20,9 @@ library(rCharts)
 ```
 
 ```{r echo=FALSE}
-# cat(noquote(add_lib_assets("F:\\Google Drive\\RProjects\\rCharts_dygraphs", cdn=TRUE)))
+cat(noquote(add_lib_assets(system.file('libraries', 'dygraph',package = 'rChartsDygraph'))))
 options(RCHART_WIDTH = 1500, RCHART_HEIGHT = 400)
+# include_assets=T, cdn=TRUE
 ```
 
 <script>
@@ -29,6 +30,5 @@ var blockRedraw = false;
 var gs = [];
 </script>
 
-<%# TODO: load assets only once, not print(include_assets=T, cdn=TRUE) per chart %>
-<% lapply(showCharts, function(rCh) { rCh$print(include_assets=T, cdn=TRUE) } ) %>
+<% lapply(showCharts, function(rCh) { rCh$print() } ) %>
 

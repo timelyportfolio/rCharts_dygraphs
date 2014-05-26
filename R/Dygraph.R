@@ -118,7 +118,8 @@ Dygraph <- setRefClass('Dygraph', contains = 'rCharts'
 #' 
 #' @param ... list of dygraph objects to display
 layout_dygraphs <- function(...) {
-  showCharts <- list(...)
+  l = list(...)
+  showCharts = if(length(l)==1 & is.list(l)) l[[1]] else l
   outfile <- file.path(tempdir(),"tmp.Rmd")
   brew(system.file('libraries/dygraph/layouts/multi.Rmd', package = 'rChartsDygraph'), outfile)
   browseURL(knit2html(outfile, outfile))
