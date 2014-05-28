@@ -12,6 +12,8 @@ Depends:
     brew,
     knitr,
     xts
+Imports:
+    RJSONIO
 Collate:
     'Dygraph.R'
 Repository: GitHub <github.com/danielkrizian/rCharts_dygraphs> ; CRAN in the future
