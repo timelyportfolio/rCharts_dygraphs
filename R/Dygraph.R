@@ -148,10 +148,10 @@ get_lib <- function(lib){
 add_lib_assets <- function(lib, cdn = F){
   assets = get_assets(get_lib(lib), cdn = cdn)
   styles <- lapply(assets$css, function(style){
-    sprintf("<link rel='stylesheet' href=%s>", style)
+    sprintf("<link rel='stylesheet' href='%s'>", style)
   })
   scripts <- lapply(assets$jshead, function(script){
-    sprintf("<script type='text/javascript' src=%s></script>", script)
+    sprintf("<script type='text/javascript' src='%s'></script>", script)
   })
   paste(c(styles, scripts), collapse = '\n')
 }
