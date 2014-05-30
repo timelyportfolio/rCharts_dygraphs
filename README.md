@@ -5,7 +5,7 @@ You can install `rCharts` from `github` using the `devtools` package
 ```coffee
 require(devtools)
 install_github("rCharts","timelyportfolio",ref="dimple_layer") # use this specific branch with temp fix
-install_github('rCharts_dygraphs', 'danielkrizian')
+install_github('rChartsDygraphs', 'danielkrizian')
 ```
 
 ## Example 
@@ -22,7 +22,7 @@ dygraph2 <- dygraph(data=SPY[,c("Date","Momentum20days")], sync=TRUE, crosshair=
 layout_dygraphs(dygraph1, dygraph2)
 ```
 
-This should produce [two charts like here (link)](http://rawgit.com/danielkrizian/rCharts_dygraphs/master/examples/multi-layout.html)
+This should produce [two charts like here (link)](http://rawgit.com/danielkrizian/rChartsDygraphs/master/examples/multi-layout.html)
 
 Zoom: mouse left-click & drag; Pan: Shift + mouse left-click & drag
 

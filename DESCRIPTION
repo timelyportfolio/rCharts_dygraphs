@@ -1,12 +1,14 @@
-Package: rChartsDygraph
+Package: rChartsDygraphs
 Type: Package
-Title: dygraphs
+Title: Run 'dygraphs' JavaScript library from R
 Version: 0.2
 Date: 2014-02-11
 Author: Daniel Krizian <daniel.krizian@gmail.com>
 Maintainer: Daniel Krizian <daniel.krizian@gmail.com>
-Description: test
-License: TBD
+Copyright: (c) 2006-, Dan Vanderkam
+Description: Interactive visualizations of time series using JavaScript and the HTML canvas
+Documentation: <http://dygraphs.com/>
+License: MIT
 Depends:
     rCharts,
     brew,
@@ -16,4 +18,4 @@ Imports:
     RJSONIO
 Collate:
     'Dygraph.R'
-Repository: GitHub <github.com/danielkrizian/rCharts_dygraphs> ; CRAN in the future
+Repository: GitHub <github.com/danielkrizian/rChartsDygraphs> ; CRAN in the future
