@@ -23,7 +23,7 @@ dgPlot <- dyPlot <- dygraph <- dygraphPlot<- function(data, x, y, y2, sync=FALSE
   # myChart$setLib( "." )
   # myChart$templates$script = "layouts/chart2.html"
   myChart$templates$script = system.file("/libraries/dygraph/layouts/chart2.html"
-                                         , package = "rChartsDygraph")
+                                         , package = "rChartsDygraphs")
   myChart$setTemplate(afterScript = "<script></script>")
   if(sync)
     myChart$synchronize()
@@ -120,14 +120,63 @@ Dygraph <- setRefClass('Dygraph', contains = 'rCharts'
 layout_dygraphs <- function(...) {
   l = list(...)
   showCharts = if(length(l)==1 & is.list(l)) l[[1]] else l
-  outfile <- file.path(tempdir(),"tmp.Rmd")
-  brew(system.file('libraries/dygraph/layouts/multi.Rmd', package = 'rChartsDygraph'), outfile)
-  browseURL(knit2html(outfile, outfile))
+  
+  #get the divs for each of the charts as a string
+  #this will be used by whisker.render later
+  chartDivs <- paste(
+    sapply(
+      showCharts,function(rCh){
+        return(paste(capture.output(rCh$print()),collapse="\n"))
+      }
+    ),
+    collapse = "\n"
+  )
+  
+  viewer = getOption("viewer")  #if not null then use RStudio viewer
+  
+  #if viewer is not null then 
+  #we will need to either use http assets or copy js and css into same directory
+  if (!grepl("^http", showCharts[[1]]$LIB$url) && !is.null(viewer)) {
+    dir.create(temp_dir)
+    suppressMessages(copy_dir_(
+      showCharts[[1]]$LIB$url,
+      file.path(temp_dir,showCharts[[1]]$LIB$name)
+    ))
+    tf <- file.path(temp_dir, "index.html")
+    
+    #get css and script files to add into head
+    #will need to copy these files in directory to use with RStudio Viewer
+    assets = get_assets(showCharts[[1]]$LIB, static = F, cdn = F)
+    
+    
+    viewer(tf)
+  } else {
+    #if not using RStudio Viewer can use assets in rChartsDygraphs directory
+    #or if using RStudio Viewer and non local (http assets)
+    #  can use those without copying
+    assets = get_assets(showCharts[[1]]$LIB, static = T, cdn = F)
+    
+    cat(
+      whisker::whisker.render(
+        readLines(
+          system.file(
+            "/libraries/dygraph/layouts/multi.html",
+            package = "rChartsDygraph")
+        )
+      ),
+      file = tf <- tempfile(fileext = ".html")
+    )
+    if (!is.null(viewer)) {
+      viewer(tf)
+    } else {
+      browseURL(tf)
+    }
+  }
 }
 
 #' Just a copy of rCharts::get_lib
 #' 
-#' Copied to rChartsDygraph package namespace, for Dygraph$new() to initialize lib field properly 
+#' Copied to rChartsDygraphs package namespace, for Dygraph$new() to initialize lib field properly 
 get_lib <- function(lib){
   if (grepl("^http", lib)){
     return(list(name = basename(lib), url = lib))
@@ -136,14 +185,14 @@ get_lib <- function(lib){
     lib_url <- normalizePath(lib)
     lib <- basename(lib_url)
   } else {
-    lib_url <- system.file('libraries', lib, package = 'rChartsDygraph')
+    lib_url <- system.file('libraries', lib, package = 'rChartsDygraphs')
   }
   return(list(name = basename(lib), url = lib_url))
 }
 
 #' Just a copy of rCharts::add_lib_assets
 #' 
-#' Copied to rChartsDygraph package namespace, so that it calls rChartsDygraph::get_lib,
+#' Copied to rChartsDygraphs package namespace, so that it calls rChartsDygraph::get_lib,
 #' not rCharts::get_lib
 add_lib_assets <- function(lib, cdn = F){
   assets = get_assets(get_lib(lib), cdn = cdn)
