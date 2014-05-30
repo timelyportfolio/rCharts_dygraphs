@@ -20,7 +20,7 @@ library(rCharts)
 ```
 
 ```{r echo=FALSE}
-cat(noquote(add_lib_assets(system.file('libraries', 'dygraph',package = 'rChartsDygraph'))))
+cat(noquote(add_lib_assets(system.file('libraries', 'dygraph',package = 'rChartsDygraphs'))))
 options(RCHART_WIDTH = 1500, RCHART_HEIGHT = 400)
 # include_assets=T, cdn=TRUE
 ```
