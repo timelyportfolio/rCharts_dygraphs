@@ -192,7 +192,7 @@ get_lib <- function(lib){
 
 #' Just a copy of rCharts::add_lib_assets
 #' 
-#' Copied to rChartsDygraphs package namespace, so that it calls rChartsDygraph::get_lib,
+#' Copied to rChartsDygraphs package namespace, so that it calls rChartsDygraphs::get_lib,
 #' not rCharts::get_lib
 add_lib_assets <- function(lib, cdn = F){
   assets = get_assets(get_lib(lib), cdn = cdn)
