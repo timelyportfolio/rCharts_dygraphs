@@ -137,6 +137,7 @@ layout_dygraphs <- function(...) {
   #if viewer is not null then 
   #we will need to either use http assets or copy js and css into same directory
   if (!grepl("^http", showCharts[[1]]$LIB$url) && !is.null(viewer)) {
+    temp_dir = tempfile(pattern = 'rCharts')
     dir.create(temp_dir)
     suppressMessages(copy_dir_(
       showCharts[[1]]$LIB$url,
@@ -161,7 +162,7 @@ layout_dygraphs <- function(...) {
         readLines(
           system.file(
             "/libraries/dygraph/layouts/multi.html",
-            package = "rChartsDygraph")
+            package = "rChartsDygraphs")
         )
       ),
       file = tf <- tempfile(fileext = ".html")
