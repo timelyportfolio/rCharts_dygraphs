@@ -137,6 +137,7 @@ layout_dygraphs <- function(...) {
   #if viewer is not null then 
   #we will need to either use http assets or copy js and css into same directory
   if (!grepl("^http", showCharts[[1]]$LIB$url) && !is.null(viewer)) {
+    temp_dir = tempfile(pattern = 'rCharts')
     dir.create(temp_dir)
     suppressMessages(copy_dir_(
       showCharts[[1]]$LIB$url,
@@ -148,7 +149,16 @@ layout_dygraphs <- function(...) {
     #will need to copy these files in directory to use with RStudio Viewer
     assets = get_assets(showCharts[[1]]$LIB, static = F, cdn = F)
     
-    
+    cat(
+      whisker::whisker.render(
+        readLines(
+          system.file(
+            "/libraries/dygraph/layouts/multi.html",
+            package = "rChartsDygraphs")
+        )
+      ),
+      file = tf)
+
     viewer(tf)
   } else {
     #if not using RStudio Viewer can use assets in rChartsDygraphs directory
@@ -161,7 +171,7 @@ layout_dygraphs <- function(...) {
         readLines(
           system.file(
             "/libraries/dygraph/layouts/multi.html",
-            package = "rChartsDygraph")
+            package = "rChartsDygraphs")
         )
       ),
       file = tf <- tempfile(fileext = ".html")
